@@ -531,25 +531,21 @@ int main(int argc, char *argv[])
   // these are normally processed by the config parser, but SDL_Init
   // must be run before the config parser: so if even SDL_Init fails,
   // these six lines will still print the help output
-	if(argc > 1)
-	{
-		if(!strcmp(argv[1], "--help") || !strcmp(argv[1],"-h"))
-		{
-            ShowUsage(argv[0]);
-			return 0;
-		}
-	}
+	//if(argc > 1) {
+	//	if(!strcmp(argv[1], "--help") || !strcmp(argv[1],"-h")) {
+	//		ShowUsage(argv[0]);
+	//		return 0;
+	//	}
+	//}
 
-	int error;//, frameskip;
+	//int error;//, frameskip;
 
 	FCEUD_Message("Starting " FCEU_NAME_AND_VERSION "...\n");
-
 	/* SDL_INIT_VIDEO Needed for (joystick config) event processing? */
 	if(SDL_Init(SDL_INIT_VIDEO)) {
 		printf("Could not initialize SDL: %s.\n", SDL_GetError());
 		return(-1);
 	}
-
 	// Initialize the configuration system
 	g_config = InitConfig();
 		
@@ -559,7 +555,7 @@ int main(int argc, char *argv[])
 	}
 
 	// initialize the infrastructure
-	error = FCEUI_Initialize();
+	int error = FCEUI_Initialize();
 	if(error != 1) {
 		ShowUsage(argv[0]);
 		SDL_Quit();
@@ -567,15 +563,15 @@ int main(int argc, char *argv[])
 	}
 	
 	// check for --help or -h and display usage; also check for --nogui
-	for(int i=0; i<argc;i++)
-	{
-		if(strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0)
-		{
-			ShowUsage(argv[0]);
-			SDL_Quit();
-			return 0;
-		}
-	}
+	//for(int i=0; i<argc;i++)
+	//{
+	//	if(strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0)
+	//	{
+	//		ShowUsage(argv[0]);
+	//		SDL_Quit();
+	//		return 0;
+	//	}
+	//}
 	int romIndex = g_config->parse(argc, argv);
 
 	// This is here so that a default fceux.cfg will be created on first
@@ -591,19 +587,10 @@ int main(int argc, char *argv[])
 	std::string s;
 
 	g_config->getOption("SDL.InputCfg", &s);
-	if(s.size() != 0)
-	{
-	InitVideo(GameInfo);
-	InputCfg(s);
+	if(s.size() != 0) {
+		InitVideo(GameInfo);
+		InputCfg(s);
 	}
-	// set the FAMICOM PAD 2 Mic thing 
-	{
-	int t;
-	g_config->getOption("SDL.Input.FamicomPad2.EnableMic", &t);
-		if(t)
-			replaceP2StartWithMicrophone = t;
-	}
-
     // update the input devices
 	UpdateInput(g_config);
 
@@ -622,7 +609,7 @@ int main(int argc, char *argv[])
 //	int rh;
 //	g_config->getOption("SDL.RecordHUD", &rh);
 //	if( rh == 0)
-		FCEUI_SetAviEnableHUDrecording(true);
+//		FCEUI_SetAviEnableHUDrecording(true);
 //	else
 //		FCEUI_SetAviEnableHUDrecording(false);
 
@@ -630,31 +617,18 @@ int main(int argc, char *argv[])
 //	int mm;
 //	g_config->getOption("SDL.MovieMsg", &mm);
 //	if( mm == 0)
-		FCEUI_SetAviDisableMovieMessages(true);
+//		FCEUI_SetAviDisableMovieMessages(true);
 //	else
 //		FCEUI_SetAviDisableMovieMessages(false);
 	
 
 	// update the emu core
 	UpdateEMUCore(g_config);
-
-	{
-		int id;
-		g_config->getOption("SDL.InputDisplay", &id);
-		extern int input_display;
-		input_display = id;
-		// not exactly an id as an true/false switch; still better than creating another int for that
-		g_config->getOption("SDL.SubtitleDisplay", &id); 
-		extern int movieSubtitles;
-		movieSubtitles = id;
-	}
-	
 	// load the hotkeys from the config life
 	setHotKeys();
 
 
-  if(romIndex >= 0)
-	{
+	if(romIndex >= 0) {
 		// load the specified game
 		error = LoadGame(argv[romIndex]);
 		if(error != 1) {
@@ -662,29 +636,11 @@ int main(int argc, char *argv[])
 			SDL_Quit();
 			return -1;
 		}
-		g_config->setOption("SDL.LastOpenFile", argv[romIndex]);
-		g_config->save();
+//		g_config->setOption("SDL.LastOpenFile", argv[romIndex]);
+//		g_config->save();
 
 	}
 	
-	// movie playback
-	g_config->getOption("SDL.Movie", &s);
-	g_config->setOption("SDL.Movie", "");
-	if (s != "")
-	{
-		if(s.find(".fm2") != std::string::npos || s.find(".fm3") != std::string::npos)
-		{
-			static int pauseframe;
-			g_config->getOption("SDL.PauseFrame", &pauseframe);
-			g_config->setOption("SDL.PauseFrame", 0);
-			FCEUI_printf("Playing back movie located at %s\n", s.c_str());
-			FCEUI_LoadMovie(s.c_str(), false, pauseframe ? pauseframe : false);
-		}
-		else
-		{
-		  FCEUI_printf("Sorry, I don't know how to play back %s\n", s.c_str());
-		}
-	}
 	
 	int periodic_saves = 0;
 	int frameskip = 0;
