@@ -66,20 +66,11 @@ CreateDirs(const std::string &dir)
 	std::string subdir;
 	int x;
 
-#if defined(WIN32) || defined(NEED_MINGW_HACKS)
-	mkdir(dir.c_str());
-	chmod(dir.c_str(), 755);
-	for(x = 0; x < 6; x++) {
-		subdir = dir + PSS + subs[x];
-		mkdir(subdir.c_str());
-	}
-#else
 	mkdir(dir.c_str(), S_IRWXU);
 	for(x = 0; x < 6; x++) {
 		subdir = dir + PSS + subs[x];
 		mkdir(subdir.c_str(), S_IRWXU);
 	}
-#endif
 }
 
 /**
@@ -94,20 +85,7 @@ GetBaseDirectory(std::string &dir)
 	if(home) {
 		dir = std::string(home) + "/.fceux";
 	} else {
-#ifdef WIN32
-		home = new char[MAX_PATH + 1];
-		GetModuleFileName(NULL, home, MAX_PATH + 1);
-
-		char *lastBS = strrchr(home,'\\');
-		if(lastBS) {
-			*lastBS = 0;
-		}
-
-		dir = std::string(home);
-		delete[] home;
-#else
 		dir = "";
-#endif
 	}
 }
 
@@ -157,31 +135,31 @@ InitConfig()
 	config->addOption("slend", "SDL.ScanLineEnd", 239);
 
 	// video controls
-	config->addOption('f', "fullscreen", "SDL.Fullscreen", 0);
+//	config->addOption('f', "fullscreen", "SDL.Fullscreen", 0);
 
 	// set x/y res to 0 for automatic fullscreen resolution detection (no change)
-	config->addOption('x', "xres", "SDL.XResolution", 0);
-	config->addOption('y', "yres", "SDL.YResolution", 0);
-	config->addOption("SDL.LastXRes", 0);
-	config->addOption("SDL.LastYRes", 0);
-	config->addOption('b', "bpp", "SDL.BitsPerPixel", 32);
-	config->addOption("doublebuf", "SDL.DoubleBuffering", 0);
-	config->addOption("autoscale", "SDL.AutoScale", 1);
-	config->addOption("keepratio", "SDL.KeepRatio", 1);
-	config->addOption("xscale", "SDL.XScale", 1.0);
-	config->addOption("yscale", "SDL.YScale", 1.0);
-	config->addOption("xstretch", "SDL.XStretch", 0);
-	config->addOption("ystretch", "SDL.YStretch", 0);
-	config->addOption("noframe", "SDL.NoFrame", 0);
-	config->addOption("special", "SDL.SpecialFilter", 0);
-	config->addOption("showfps", "SDL.ShowFPS", 0);
+//	config->addOption('x', "xres", "SDL.XResolution", 0);
+//	config->addOption('y', "yres", "SDL.YResolution", 0);
+//	config->addOption("SDL.LastXRes", 0);
+//	config->addOption("SDL.LastYRes", 0);
+//	config->addOption('b', "bpp", "SDL.BitsPerPixel", 32);
+//	config->addOption("doublebuf", "SDL.DoubleBuffering", 0);
+//	config->addOption("autoscale", "SDL.AutoScale", 1);
+//	config->addOption("keepratio", "SDL.KeepRatio", 1);
+	config->addOption("xscale", "SDL.XScale", 4.0);
+	config->addOption("yscale", "SDL.YScale", 4.0);
+//	config->addOption("xstretch", "SDL.XStretch", 0);
+//	config->addOption("ystretch", "SDL.YStretch", 0);
+//	config->addOption("noframe", "SDL.NoFrame", 0);
+//	config->addOption("special", "SDL.SpecialFilter", 0);
+//	config->addOption("showfps", "SDL.ShowFPS", 0);
 
 	// OpenGL options
-	config->addOption("opengl", "SDL.OpenGL", 0);
-	config->addOption("openglip", "SDL.OpenGLip", 0);
-	config->addOption("SDL.SpecialFilter", 0);
-	config->addOption("SDL.SpecialFX", 0);
-	config->addOption("SDL.Vsync", 1);
+//	config->addOption("opengl", "SDL.OpenGL", 0);
+//	config->addOption("openglip", "SDL.OpenGLip", 0);
+//	config->addOption("SDL.SpecialFilter", 0);
+//	config->addOption("SDL.SpecialFX", 0);
+//	config->addOption("SDL.Vsync", 1);
 
 	// network play options - netplay is broken
 	config->addOption("server", "SDL.NetworkIsServer", 0);
@@ -242,17 +220,6 @@ InitConfig()
     //TODO implement this
     config->addOption("periodicsaves", "SDL.PeriodicSaves", 0);
 
-    
-    #ifdef _GTK
-	char* home_dir = getenv("HOME");
-	// prefixed with _ because they are internal (not cli options)
-	config->addOption("_lastopenfile", "SDL.LastOpenFile", home_dir);
-	config->addOption("_laststatefrom", "SDL.LastLoadStateFrom", home_dir);
-	config->addOption("_lastopennsf", "SDL.LastOpenNSF", home_dir);
-	config->addOption("_lastsavestateas", "SDL.LastSaveStateAs", home_dir);
-	config->addOption("_lastloadlua", "SDL.LastLoadLua", home_dir);
-    #endif
-    
 	// fcm -> fm2 conversion
 	config->addOption("fcmconvert", "SDL.FCMConvert", "");
     

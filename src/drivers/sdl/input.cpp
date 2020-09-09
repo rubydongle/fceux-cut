@@ -1927,6 +1927,7 @@ void ConfigDevice (int which, int arg)
  */
 void InputCfg (const std::string & text)
 {
+	FCEUI_printf("%s...", __FUNCTION__);
 #ifdef _GTK
 	// enable noGui to prevent the gtk x11 hack from executing
 	noGui = 1;

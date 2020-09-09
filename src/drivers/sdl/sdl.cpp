@@ -544,11 +544,6 @@ int main(int argc, char *argv[])
 
 	FCEUD_Message("Starting " FCEU_NAME_AND_VERSION "...\n");
 
-#ifdef WIN32
-	/* Taken from win32 sdl_main.c */
-	SDL_SetModuleHandle(GetModuleHandle(NULL));
-#endif
-
 	/* SDL_INIT_VIDEO Needed for (joystick config) event processing? */
 	if(SDL_Init(SDL_INIT_VIDEO)) {
 		printf("Could not initialize SDL: %s.\n", SDL_GetError());
@@ -584,13 +579,6 @@ int main(int argc, char *argv[])
 			SDL_Quit();
 			return 0;
 		}
-#ifdef _GTK
-		else if(strcmp(argv[i], "--nogui") == 0)
-		{
-			noGui = 1;
-			argv[i] = "";
-		}
-#endif
 	}
 	int romIndex = g_config->parse(argc, argv);
 
@@ -664,6 +652,8 @@ int main(int argc, char *argv[])
 	g_config->getOption("SDL.YResolution", &yres);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	// TODO _ SDL 2.0
+	g_config->setOption("SDL.LastXRes", 512);
+	g_config->setOption("SDL.LastYRes", 448);
 #else
 	const SDL_VideoInfo* vid_info = SDL_GetVideoInfo();
 	if(xres == 0) 
