@@ -548,7 +548,6 @@ int main(int argc, char *argv[])
 	}
 	// Initialize the configuration system
 	g_config = InitConfig();
-		
 	if(!g_config) {
 		SDL_Quit();
 		return -1;
@@ -580,17 +579,17 @@ int main(int argc, char *argv[])
 	// mbg 8/23/2008 - this is also here so that the inputcfg routines can have 
     // a chance to dump the new inputcfg to the fceux.cfg  in case you didnt 
     // specify a rom  filename
-	g_config->getOption("SDL.NoConfig", &noconfig);
-	if (!noconfig)
-		g_config->save();
+	//g_config->getOption("SDL.NoConfig", &noconfig);
+	//if (!noconfig)
+	//	g_config->save();
 	
 	std::string s;
 
-	g_config->getOption("SDL.InputCfg", &s);
-	if(s.size() != 0) {
-		InitVideo(GameInfo);
-		InputCfg(s);
-	}
+//	g_config->getOption("SDL.InputCfg", &s);
+//	if(s.size() != 0) {
+//		InitVideo(GameInfo);
+//		InputCfg(s);
+//	}
     // update the input devices
 	UpdateInput(g_config);
 
